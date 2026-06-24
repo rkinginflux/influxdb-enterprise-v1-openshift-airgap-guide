@@ -176,6 +176,20 @@ oc -n influxdb-enterprise get pods,svc,pvc
 oc -n influxdb-enterprise get statefulset
 ```
 
+Check license secret payload (JSON decode):
+
+```bash
+oc -n influxdb-enterprise get secret influxdb-license \
+  -o jsonpath='{.data.json}' | base64 --decode | jq .
+```
+
+If the secret key was created as `license.json` instead of `json`, use:
+
+```bash
+oc -n influxdb-enterprise get secret influxdb-license \
+  -o jsonpath='{.data.license\.json}' | base64 --decode | jq .
+```
+
 Check logs:
 
 ```bash
