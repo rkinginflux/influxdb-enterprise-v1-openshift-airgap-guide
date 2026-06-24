@@ -1,0 +1,45 @@
+serviceAccount:
+  create: true
+  name: influxdb-enterprise
+
+license:
+  secret:
+    name: influxdb-license
+    key: json
+
+livenessProbe:
+  initialDelaySeconds: 3600
+
+bootstrap:
+  auth:
+    secretName: influxdb-auth
+
+meta:
+  replicas: 3
+  image:
+    repository: <internal-registry>/influxdb/influxdb
+  sharedSecret:
+    secretName: influxdb-shared-secret
+  persistence:
+    enabled: true
+    storageClass: <storageclass>
+    accessMode: ReadWriteOnce
+    size: 20Gi
+  https:
+    enabled: false
+    useCertManager: false
+
+data:
+  replicas: 3
+  image:
+    repository: <internal-registry>/influxdb/influxdb
+  persistence:
+    enabled: true
+    storageClass: <storageclass>
+    accessMode: ReadWriteOnce
+    size: 100Gi
+  https:
+    enabled: false
+    useCertManager: false
+  flux:
+    enabled: true
