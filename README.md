@@ -109,10 +109,55 @@ oc -n influxdb-enterprise create secret generic influxdb-auth \
 
 ### 2.4 Create values file
 
-Start from `examples/values-airgap.yaml` and set:
-- `<internal-registry>`
-- `<storageclass>`
-- replicas/sizing per customer requirements
+Use `examples/values-airgap.yaml` with your environment-specific substitutions (`<internal-registry>`, `<storageclass>`):
+
+```yaml
+serviceAccount:
+  create: true
+  name: influxdb-enterprise
+
+license:
+  secret:
+    name: influxdb-license
+    key: json
+
+livenessProbe:
+  initialDelaySeconds: 3600
+
+bootstrap:
+  auth:
+    secretName: influxdb-auth
+
+meta:
+  replicas: 3
+  image:
+    repository: <internal-registry>/influxdb/influxdb
+  sharedSecret:
+    secretName: influxdb-shared-secret
+  persistence:
+    enabled: true
+    storageClass: <storageclass>
+    accessMode: ReadWriteOnce
+    size: 20Gi
+  https:
+    enabled: false
+    useCertManager: false
+
+data:
+  replicas: 3
+  image:
+    repository: <internal-registry>/influxdb/influxdb
+  persistence:
+    enabled: true
+    storageClass: <storageclass>
+    accessMode: ReadWriteOnce
+    size: 100Gi
+  https:
+    enabled: false
+    useCertManager: false
+  flux:
+    enabled: true
+```
 
 ### 2.5 Install from local chart package
 
